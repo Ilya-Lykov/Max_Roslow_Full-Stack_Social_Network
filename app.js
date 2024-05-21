@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const fs = require("fs");
 
 var indexRouter = require('./routes/index');
 
@@ -10,14 +11,19 @@ var app = express();
 
 // view engine setup
 
-// app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'jade');
+
+app.use("/uploads", express.static('uploads'));
 
 app.use('/api', indexRouter);
+
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
 
 // catch 404 and forward to error handler;
 app.use(function (req, res, next) {
