@@ -16,13 +16,14 @@ datasource db {
 model User {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   email       String    @unique
+  password    String
   name        String?
   avatarUrl   String?
   dateOfBirth DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  bio         String
-  location    String
+  bio         String?
+  location    String?
   post        Post[]
   likes       Like[]
   comments    Comment[]
