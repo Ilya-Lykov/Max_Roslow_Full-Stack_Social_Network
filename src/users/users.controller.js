@@ -17,7 +17,7 @@ const UserController = {
         if (!result) {
             return res.status(400).json({ error: 'Неверный логин и пароль' });
         }
-        const { id, email } = await UsersService.getUserInfo(req.body.email);
+        const { id, email } = await UsersService.getUserInfoByEmail(req.body.email);
         const token = jwt.sign({ email: email, id: id }, SECRET_KEY);
         res.json(token);
     },
@@ -25,9 +25,8 @@ const UserController = {
         res.send('current');
     },
     getUser: async (req, res) => {
-        const { id } = req.params;
-        const userId = req.user.UserId;
-        res.json({ id, userId });
+        const { reqId } = req.params;
+        res.json(await UsersService.getUserInfoById(reqId));
     },
     updateUser: async (req, res) => {
         res.send("updateUser");

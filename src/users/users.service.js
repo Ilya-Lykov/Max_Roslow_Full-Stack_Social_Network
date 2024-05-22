@@ -28,8 +28,11 @@ const UsersService = {
         const newUser = new User(existedUser.email, existedUser.name, existedUser.password);
         return newUser.comparePassword(password);
     },
-    async getUserInfo(email) {
+    async getUserInfoByEmail(email) {
         return UsersRepository.find(email);
+    },
+    async getUserInfoById(id) {
+        return UsersRepository.findById(id);
     }
 };
 

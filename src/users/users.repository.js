@@ -15,7 +15,7 @@ const UsersRepository = {
     find: async (email) => {
         return prisma.user.findUnique({ where: { email } });
     },
-    findById: async ({ id }) => {
+    findById: async (id) => {
         return prisma.user.findUnique({
             where: { id },
             include: {
