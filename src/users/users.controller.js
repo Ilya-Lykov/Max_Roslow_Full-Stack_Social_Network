@@ -8,26 +8,63 @@ const UserController = {
     register: async (req, res) => {
         const result = await UsersService.createUser(req.body);
         if (!result) {
-            return res.status(400).json({ error: 'Пользователь с таким e-mail существует' });
+            return res.status(400).json({ error: 'Пользователь с email существует' });
         }
         return res.status(200).json({ email: result.email, id: result.id });
     },
+
     login: async (req, res) => {
-        const result = await UsersService.validateUser(req.body);
-        if (!result) {
-            return res.status(400).json({ error: 'Неверный логин и пароль' });
+        try {
+            const result = await UsersService.validateUser(req.body);
+
+            if (!result) {
+                return res.status(400).json({ error: 'Неверный логин и пароль' });
+            }
+
+            const { id, email } = await UsersService.getUserInfoByEmail(req.body.email);
+            const token = jwt.sign({ email: email, userId: id }, SECRET_KEY);
+            res.json({ error: token });
+
+        } catch (err) {
+            console.log('login error', err);
         }
-        const { id, email } = await UsersService.getUserInfoByEmail(req.body.email);
-        const token = jwt.sign({ email: email, id: id }, SECRET_KEY);
-        res.json(token);
     },
+
     current: async (req, res) => {
-        res.send('current');
+        try {
+            const user = await UsersService.getCurrent(req.user.userId);
+            if (!user) {
+                return res.status(404).json({ error: 'Пользователь не найден' });
+
+            }
+            res.json(user);
+
+        } catch (err) {
+            console.error("Get Current Error", err);
+            res.status(500).json({ error: "InternalServerError" });
+        }
     },
+
     getUser: async (req, res) => {
-        const { reqId } = req.params;
-        res.json(await UsersService.getUserInfoById(reqId));
+        try {
+            const { id } = req.params;
+            const userId = req.user.userId;
+            const user = await UsersService.getUserInfoById(id);
+
+            if (!user) {
+                errors.UserNotFound;
+            }
+
+            const isFollowing = await UsersService.isFollowing(id, userId);
+
+            res.json({ ...user, isFollowing: Boolean(isFollowing) });
+
+        } catch (err) {
+            console.error('getUser Error', err);
+            res.status(500).json({ error: "InternalServerError" });
+        }
     },
+
     updateUser: async (req, res) => {
         res.send("updateUser");
     },

@@ -24,13 +24,32 @@ const UsersRepository = {
             }
         });
     },
-    isFollowing: async (followerId, followingId) => {
+    isFollowing: async (id, userId) => {
         return await prisma.follows.findFirst({
             where: {
                 AND: [
-                    { followerId: followerId },
-                    { followingId: followingId }
+                    { followerId: userId },
+                    { followingId: id }
                 ]
+            }
+        });
+    },
+    getCurrentUser: async (userId) => {
+        return prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                followers: {
+                    include: {
+                        follower: true
+                    }
+                },
+                following: {
+                    include: {
+                        following: true
+                    }
+                }
             }
         });
     }
