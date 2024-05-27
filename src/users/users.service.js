@@ -2,6 +2,7 @@ const User = require('./users.entity');
 const UsersRepository = require('./users.repository');
 // const { createIcon, avatarPath } = require('../../service/user.icon.service');
 const UserIcon = require('../../service/user.icon.service');
+const { update } = require('jdenticon/standalone');
 require("dotenv").config();
 
 const SALT = +process.env.SALT;
@@ -42,8 +43,11 @@ const UsersService = {
     async isFollowing(id, userId) {
         return UsersRepository.isFollowing(id, userId);
     },
-    async getCurrent(userId) {
+    async getCurrentUser(userId) {
         return UsersRepository.getCurrentUser(userId);
+    },
+    async updateUser(userId, body, filePath) {
+        return UsersRepository.update(userId, body, filePath);
     }
 };
 

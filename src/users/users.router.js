@@ -8,6 +8,6 @@ UserRouter.post('/login', UserController.login);
 UserRouter.post('/register', UserController.register);
 UserRouter.get('/current', authenticateToken, UserController.current);
 UserRouter.get('/user/:id', authenticateToken, UserController.getUser);
-UserRouter.put('/user/:id', authenticateToken, UserController.login);
+UserRouter.put('/user/:id', authenticateToken, UserController.updateUser);
 
 module.exports = UserRouter;

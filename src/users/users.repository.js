@@ -52,6 +52,21 @@ const UsersRepository = {
                 }
             }
         });
+    },
+    update: async (userId, body, filePath) => {
+        const { email, name, dateOfBirth, bio, location, } = body;
+
+        return await prisma.user.update({
+            where: { id: userId },
+            data: {
+                email: email || undefined,
+                name: name || undefined,
+                avatarUrl: filePath ? `/${filePath}` : undefined,
+                dateOfBirth: dateOfBirth || undefined,
+                bio: bio || undefined,
+                location: location || undefined
+            }
+        });
     }
 };
 

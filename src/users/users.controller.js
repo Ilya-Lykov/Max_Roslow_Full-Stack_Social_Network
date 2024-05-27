@@ -32,7 +32,7 @@ const UserController = {
 
     current: async (req, res) => {
         try {
-            const user = await UsersService.getCurrent(req.user.userId);
+            const user = await UsersService.getCurrentUser(req.user.userId);
             if (!user) {
                 return res.status(404).json({ error: 'Пользователь не найден' });
 
@@ -66,7 +66,38 @@ const UserController = {
     },
 
     updateUser: async (req, res) => {
-        res.send("updateUser");
+        const { id } = req.params;
+        const { email } = req.body;
+
+        let filePath;
+
+        if (req.file && req.file.path) {
+            filePath = req.file.path;
+        }
+
+        if (id !== req.user.userId) {
+            return res.status(403).json({ error: 'Нет доступа' });
+        }
+
+        try {
+            if (email) {
+                const existingUser = await UsersService.getUserInfoByEmail(email);
+
+                if (existingUser && existingUser.id !== id) {
+                    return res.status(400).json({ error: "Почта уже использована" });
+                }
+
+            }
+
+            const user = await UsersService.updateUser(id, req.body, filePath);
+
+            res.json(user);
+
+
+        } catch (error) {
+            console.error("Update Error", error);
+            res.status(500).json({ error: "InternalServerError" });
+        }
     },
 
 };
